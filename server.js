@@ -18,9 +18,20 @@ mongoose
   .catch((err) => console.error(err));
 
 app.post("/api/appointments", async (req, res) => {
-  const { name, service, date } = req.body;
+  const { name, service, date, email, phone, time } = req.body;
+  if (!name || !service || !date || !email || !phone || !time) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
   try {
-    const newAppointment = new Appointment({ name, service, date });
+    const newAppointment = new Appointment({
+      name,
+      email,
+      phone,
+      service,
+      date,
+      time,
+    });
     await newAppointment.save();
     res.status(201).json({ message: "Appointment created" });
   } catch (err) {
