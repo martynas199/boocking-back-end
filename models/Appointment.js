@@ -7,8 +7,8 @@ const AppointmentSchema = new mongoose.Schema({
   service: { type: String, required: true },
   date: { type: Date, required: true },
   time: { type: String, required: true },
-  sessionId: { type: String, required: true, unique: true }, // Store Stripe session ID
-  payment_verified: { type: Boolean, default: false }, // Track payment status
+  sessionId: { type: String, unique: true, required: true }, // Unique session ID
+  payment_verified: { type: Boolean, default: false }, // Payment status
 });
 
 module.exports = mongoose.model("Appointment", AppointmentSchema);

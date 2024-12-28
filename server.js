@@ -34,7 +34,7 @@ app.post("/api/payment", async (req, res) => {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "GBP",
             product_data: {
               name: service,
               description: `Booking for ${name}`,
@@ -86,35 +86,43 @@ app.post("/api/verify-payment", async (req, res) => {
     if (session.payment_status === "paid") {
       const { name, service, email, phone, date, time } = session.metadata;
 
-      // Check if the payment has already been processed for this session
+      // Check if an appointment already exists for this sessionId
       const existingAppointment = await Appointment.findOne({ sessionId });
 
-      // If an appointment with this sessionId exists and payment is already verified, skip the creation
-      if (existingAppointment && existingAppointment.payment_verified) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "This payment has already been processed. Appointment already exists.",
+      if (existingAppointment) {
+        if (existingAppointment.payment_verified) {
+          return res.status(200).json({
+            success: true,
+            message: "Succesfully booked.",
+          });
+        }
+
+        // Update payment status if appointment exists but was not verified
+        existingAppointment.payment_verified = true;
+        await existingAppointment.save();
+        return res.status(200).json({
+          success: true,
+          message: "Payment verified and appointment updated successfully.",
         });
       }
 
-      // Create the appointment only if payment is successful and not already processed
+      // Create a new appointment
       const appointment = new Appointment({
-        sessionId: session.id, // Store sessionId to check against future bookings
         name,
         email,
         phone,
         service,
         date,
         time,
-        payment_verified: true, // Mark payment as verified
+        sessionId,
+        payment_verified: true, // Mark as verified
       });
 
       await appointment.save();
 
       return res.status(200).json({
         success: true,
-        message: "Appointment created successfully",
+        message: "Appointment created successfully.",
       });
     } else {
       return res.status(400).json({
