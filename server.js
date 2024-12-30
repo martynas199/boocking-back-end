@@ -149,4 +149,55 @@ app.get("/api/appointments", async (req, res) => {
   }
 });
 
+// Endpoint to update an appointment
+app.put("/api/appointments/:id", async (req, res) => {
+  const { id } = req.params; // Get appointment ID from URL
+  const { name, email, phone, service, date, time } = req.body; // Get updated data from request body
+
+  try {
+    // Find the appointment by ID and update it
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      id,
+      { name, email, phone, service, date, time },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Appointment updated successfully",
+      appointment: updatedAppointment,
+    });
+  } catch (err) {
+    console.error("Error updating appointment:", err);
+    res.status(500).json({ error: "Failed to update appointment" });
+  }
+});
+
+// Endpoint to delete an appointment
+app.delete("/api/appointments/:id", async (req, res) => {
+  const { id } = req.params; // Get appointment ID from URL
+
+  try {
+    // Find the appointment by ID and delete it
+    const deletedAppointment = await Appointment.findByIdAndDelete(id);
+
+    if (!deletedAppointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Appointment deleted successfully",
+      appointment: deletedAppointment,
+    });
+  } catch (err) {
+    console.error("Error deleting appointment:", err);
+    res.status(500).json({ error: "Failed to delete appointment" });
+  }
+});
+
 app.listen(5000, () => console.log("Server running on port 5000"));
