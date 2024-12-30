@@ -46,7 +46,7 @@ app.post("/api/payment", async (req, res) => {
       ],
       mode: "payment", // One-time payment
       success_url:
-        "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
+        "https://booking-virid.vercel.app/success?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: "http://localhost:3000/cancel",
       metadata: {
         name,
