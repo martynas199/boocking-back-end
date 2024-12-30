@@ -47,7 +47,8 @@ app.post("/api/payment", async (req, res) => {
       mode: "payment", // One-time payment
       success_url:
         "https://booking-virid.vercel.app/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:3000/cancel",
+      cancel_url: "https://booking-virid.vercel.app/cancel",
+      payment_method_types: ["card", "paypal", "klarna"], // Include PayPal and Klarna
       metadata: {
         name,
         service,
