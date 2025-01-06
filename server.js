@@ -116,7 +116,6 @@ app.post("/api/verify-payment", async (req, res) => {
         time,
         sessionId,
         payment_verified: true, // Mark as verified
-        treatmentLength,
       });
 
       await appointment.save();
@@ -153,13 +152,13 @@ app.get("/api/appointments", async (req, res) => {
 // Endpoint to update an appointment
 app.put("/api/appointments/:id", async (req, res) => {
   const { id } = req.params; // Get appointment ID from URL
-  const { name, email, phone, service, date, time, treatmentLength } = req.body; // Get updated data from request body
+  const { name, email, phone, service, date, time } = req.body; // Get updated data from request body
 
   try {
     // Find the appointment by ID and update it
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       id,
-      { name, email, phone, service, date, time, treatmentLength },
+      { name, email, phone, service, date, time },
       { new: true } // Return the updated document
     );
 
