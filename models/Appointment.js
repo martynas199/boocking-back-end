@@ -5,10 +5,13 @@ const AppointmentSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   service: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date, required: true }, // Use Date type for date field
   time: { type: String, required: true },
-  sessionId: { type: String, unique: true, required: true }, // Unique session ID
-  payment_verified: { type: Boolean, default: false }, // Payment status
+  sessionId: { type: String, required: true },
+  payment_verified: { type: Boolean, default: false },
+  treatmentLength: { type: Number, required: true }, // New field
 });
 
-module.exports = mongoose.model("Appointment", AppointmentSchema);
+const Appointment = mongoose.model("Appointment", AppointmentSchema);
+
+module.exports = Appointment;

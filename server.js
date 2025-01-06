@@ -20,9 +20,17 @@ mongoose
 
 // Endpoint to create a PaymentIntent with Stripe
 app.post("/api/payment", async (req, res) => {
-  const { name, service, email, phone, date, time } = req.body;
+  const { name, service, email, phone, date, time, treatmentLength } = req.body;
 
-  if (!name || !service || !email || !phone || !date || !time) {
+  if (
+    !name ||
+    !service ||
+    !email ||
+    !phone ||
+    !date ||
+    !time ||
+    !treatmentLength
+  ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -38,7 +46,7 @@ app.post("/api/payment", async (req, res) => {
               name: service,
               description: `Booking for ${name}`,
             },
-            unit_amount: 5000, // Amount in cents (e.g., 5000 cents = $50)
+            unit_amount: 5000, // Amount in cents (e.g., 5000 cents = £50)
           },
           quantity: 1,
         },
@@ -55,6 +63,7 @@ app.post("/api/payment", async (req, res) => {
         phone,
         date,
         time,
+        treatmentLength, // Added treatmentLength to metadata
       },
     });
 
@@ -84,7 +93,8 @@ app.post("/api/verify-payment", async (req, res) => {
 
     // Check if the payment was successful
     if (session.payment_status === "paid") {
-      const { name, service, email, phone, date, time } = session.metadata;
+      const { name, service, email, phone, date, time, treatmentLength } =
+        session.metadata;
 
       // Check if an appointment already exists for this sessionId
       const existingAppointment = await Appointment.findOne({ sessionId });
@@ -93,7 +103,7 @@ app.post("/api/verify-payment", async (req, res) => {
         if (existingAppointment.payment_verified) {
           return res.status(200).json({
             success: true,
-            message: "Succesfully booked.",
+            message: "Successfully booked.",
           });
         }
 
@@ -106,7 +116,7 @@ app.post("/api/verify-payment", async (req, res) => {
         });
       }
 
-      // Create a new appointment
+      // Create a new appointment with treatmentLength
       const appointment = new Appointment({
         name,
         email,
@@ -116,6 +126,7 @@ app.post("/api/verify-payment", async (req, res) => {
         time,
         sessionId,
         payment_verified: true, // Mark as verified
+        treatmentLength, // Save treatmentLength
       });
 
       await appointment.save();
@@ -152,13 +163,13 @@ app.get("/api/appointments", async (req, res) => {
 // Endpoint to update an appointment
 app.put("/api/appointments/:id", async (req, res) => {
   const { id } = req.params; // Get appointment ID from URL
-  const { name, email, phone, service, date, time } = req.body; // Get updated data from request body
+  const { name, email, phone, service, date, time, treatmentLength } = req.body; // Get updated data from request body
 
   try {
     // Find the appointment by ID and update it
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       id,
-      { name, email, phone, service, date, time },
+      { name, email, phone, service, date, time, treatmentLength },
       { new: true } // Return the updated document
     );
 
