@@ -5,7 +5,7 @@ const AppointmentSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   service: { type: String, required: true },
-  date: { type: Date, required: true }, // Use Date type for date field
+  date: { type: String, required: true },
   time: { type: String, required: true },
   sessionId: { type: String, required: true },
   payment_verified: { type: Boolean, default: false },
