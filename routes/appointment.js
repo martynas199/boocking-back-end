@@ -204,7 +204,7 @@ router.post("/api/verify-payment", async (req, res) => {
 });
 
 // Fetch all appointments
-router.get("/api/appointments", async (req, res) => {
+router.get("/appointments", async (req, res) => {
   try {
     const appointments = await Appointment.find();
     res.json(appointments);
@@ -214,7 +214,7 @@ router.get("/api/appointments", async (req, res) => {
 });
 
 // Endpoint to update an appointment
-router.put("/api/appointments/:id", async (req, res) => {
+router.put("/appointments/:id", async (req, res) => {
   const { id } = req.params; // Get appointment ID from URL
   const { name, email, phone, service, date, time, treatmentLength } = req.body; // Get updated data from request body
 
