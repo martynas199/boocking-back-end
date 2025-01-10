@@ -5,7 +5,7 @@ const Appointment = require("./../models/Appointment");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe with secret key
 
 // Endpoint to create a PaymentIntent with Stripe
-router.post("/api/payment", async (req, res) => {
+router.post("/payment", async (req, res) => {
   const { name, service, email, phone, date, time, treatmentLength } = req.body;
 
   if (
@@ -68,7 +68,7 @@ const checkExistingAppointment = async (sessionId, date, time, service) => {
   return await Appointment.findOne({ sessionId, date, time, service });
 };
 
-router.post("/api/verify-payment", async (req, res) => {
+router.post("/verify-payment", async (req, res) => {
   const {
     sessionId,
     isAdmin,
@@ -242,7 +242,7 @@ router.put("/appointments/:id", async (req, res) => {
 });
 
 // Endpoint to delete an appointment
-router.delete("/api/appointments/:id", async (req, res) => {
+router.delete("/appointments/:id", async (req, res) => {
   const { id } = req.params; // Get appointment ID from URL
 
   try {
