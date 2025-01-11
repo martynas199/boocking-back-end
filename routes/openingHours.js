@@ -3,13 +3,11 @@ const router = express.Router();
 const OpeningHours = require("../models/OpeningHours");
 
 // Add working hours
-router.post("/opening-hours", async (req, res) => {
+router.post("/working-hours", async (req, res) => {
   try {
     const { hours } = req.body;
 
-    // Assuming the data sent from frontend matches the schema format
-    const newOpeningHours = new OpeningHours(hours);
-
+    const newOpeningHours = new OpeningHours({ hours });
     await newOpeningHours.save();
     return res
       .status(201)
