@@ -3,6 +3,8 @@ const cors = require("cors");
 require("dotenv").config();
 const serviceRoutes = require("./routes/services");
 const appointmentRoutes = require("./routes/appointment");
+const workingHoursRoutes = require("./routes/openingHours");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -15,7 +17,15 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error(err));
 
+// Routes
 app.use("/api", serviceRoutes);
 app.use("/api", appointmentRoutes);
+app.use("/api", workingHoursRoutes);
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({ message: err });
+});
 
 app.listen(5000, () => console.log("Server running on port 5000"));
