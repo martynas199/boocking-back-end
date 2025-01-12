@@ -17,6 +17,10 @@ const ServiceSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  imageUrl: {
+    type: String,
+    required: true, // Set to true if every service must have an image
+  },
 });
 
 const Service = mongoose.model("Service", ServiceSchema);

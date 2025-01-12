@@ -6,8 +6,18 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe w
 
 // Endpoint to create a PaymentIntent with Stripe
 router.post("/payment", async (req, res) => {
-  const { name, service, email, phone, date, time, treatmentLength } = req.body;
+  const {
+    name,
+    service,
+    email,
+    phone,
+    date,
+    time,
+    treatmentLength,
+    treatmentPrice,
+  } = req.body;
 
+  // Validate all required fields
   if (
     !name ||
     !service ||
@@ -15,15 +25,19 @@ router.post("/payment", async (req, res) => {
     !phone ||
     !date ||
     !time ||
-    !treatmentLength
+    !treatmentLength ||
+    !treatmentPrice
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
+    // Calculate 25% of treatmentPrice
+    const unitAmount = Math.round((treatmentPrice * 25) / 100);
+
     // Create a Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"], // Allow credit card payments
+      payment_method_types: ["card", "klarna", "paypal"], // Include additional payment methods
       line_items: [
         {
           price_data: {
@@ -32,16 +46,15 @@ router.post("/payment", async (req, res) => {
               name: service,
               description: `Booking for ${name}`,
             },
-            unit_amount: 5000, // Amount in cents (e.g., 5000 cents = £50)
+            unit_amount: unitAmount * 100, // Convert to pence
           },
           quantity: 1,
         },
       ],
       mode: "payment", // One-time payment
       success_url:
-        "https://beauty-app-five.vercel.app/success?session_id={CHECKOUT_SESSION_ID}",
+        "http://localhost:5173/success/success?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: "https://booking-virid.vercel.app/cancel",
-      payment_method_types: ["card", "paypal", "klarna"], // Include PayPal and Klarna
       metadata: {
         name,
         service,
@@ -49,17 +62,14 @@ router.post("/payment", async (req, res) => {
         phone,
         date,
         time,
-        treatmentLength, // Added treatmentLength to metadata
+        treatmentLength, // Add treatmentLength to metadata
       },
     });
 
-    // Return the session ID to the frontend
-    res.status(200).json({
-      id: session.id, // The Checkout session ID
-    });
-  } catch (err) {
-    console.error("Error creating checkout session:", err);
-    res.status(500).json({ error: "Failed to create checkout session" });
+    return res.status(200).json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating payment session:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -123,6 +133,7 @@ router.post("/verify-payment", async (req, res) => {
       return res.status(500).json({
         success: false,
         message: "Failed to create appointment by admin.",
+        error,
       });
     }
   }

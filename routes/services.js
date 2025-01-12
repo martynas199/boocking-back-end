@@ -1,24 +1,42 @@
 const express = require("express");
 const router = express.Router();
 const Service = require("../models/Service"); // Import the service schema
+const multer = require("multer");
+const cloudinary = require("../utils/cloudinary");
+const fs = require("fs"); // Add this line to import fs module
+
+const upload = multer({ dest: "uploads/" }); // Temporary storage
 
 // Add a new service
-router.post("/services", async (req, res) => {
+router.post("/services", upload.single("image"), async (req, res) => {
   try {
     const { title, description, treatmentLength, price } = req.body;
 
-    if (!title || !description || !treatmentLength || !price) {
-      return res.status(400).json({ error: "All fields are required." });
+    // Validate fields
+    if (!title || !description || !treatmentLength || !price || !req.file) {
+      return res
+        .status(400)
+        .json({ error: "All fields, including an image, are required." });
     }
+
+    // Upload image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "services", // Optional folder in Cloudinary
+    });
 
     const newService = new Service({
       title,
       description,
       treatmentLength,
       price,
+      imageUrl: result.secure_url, // Use the secure URL from Cloudinary
     });
 
     const savedService = await newService.save();
+
+    // Clean up local file storage if needed
+    fs.unlinkSync(req.file.path); // Uncomment if you want to delete the file locally
+
     res.status(200).json(savedService);
   } catch (error) {
     console.error("Error adding service:", error);
