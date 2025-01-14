@@ -18,17 +18,20 @@ router.post("/payment", async (req, res) => {
   } = req.body;
 
   // Validate all required fields
-  if (
-    !name ||
-    !service ||
-    !email ||
-    !phone ||
-    !date ||
-    !time ||
-    !treatmentLength ||
-    !treatmentPrice
-  ) {
-    return res.status(400).json({ error: "All fields are required" });
+  const missingFields = [];
+  if (!name) missingFields.push("name");
+  if (!service) missingFields.push("service");
+  if (!email) missingFields.push("email");
+  if (!phone) missingFields.push("phone");
+  if (!date) missingFields.push("date");
+  if (!time) missingFields.push("time");
+  if (!treatmentLength) missingFields.push("treatmentLength");
+  if (!treatmentPrice) missingFields.push("treatmentPrice");
+
+  if (missingFields.length > 0) {
+    return res.status(400).json({
+      error: `All fields are required. Missing: ${missingFields}`,
+    });
   }
 
   try {
@@ -53,7 +56,7 @@ router.post("/payment", async (req, res) => {
       ],
       mode: "payment", // One-time payment
       success_url:
-        "http://localhost:5173/success/success?session_id={CHECKOUT_SESSION_ID}",
+        "https://beauty-app-five.vercel.app/success?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: "https://booking-virid.vercel.app/cancel",
       metadata: {
         name,
@@ -63,6 +66,7 @@ router.post("/payment", async (req, res) => {
         date,
         time,
         treatmentLength, // Add treatmentLength to metadata
+        treatmentPrice,
       },
     });
 
@@ -89,6 +93,7 @@ router.post("/verify-payment", async (req, res) => {
     date,
     time,
     treatmentLength,
+    treatmentPrice,
   } = req.body;
 
   // If admin, bypass sessionId requirement
@@ -120,6 +125,7 @@ router.post("/verify-payment", async (req, res) => {
         sessionId: null, // No sessionId needed for admin bookings
         payment_verified: true, // Automatically verified
         treatmentLength, // Save treatmentLength
+        treatmentPrice,
       });
 
       await appointment.save();
@@ -191,6 +197,7 @@ router.post("/verify-payment", async (req, res) => {
         sessionId,
         payment_verified: true, // Mark as verified
         treatmentLength, // Save treatmentLength
+        treatmentPrice,
       });
 
       await appointment.save();
