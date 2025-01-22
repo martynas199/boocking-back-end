@@ -4,6 +4,7 @@ require("dotenv").config();
 const serviceRoutes = require("./routes/services");
 const appointmentRoutes = require("./routes/appointment");
 const workingHoursRoutes = require("./routes/openingHours");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,7 @@ mongoose
 app.use("/api", serviceRoutes);
 app.use("/api", appointmentRoutes);
 app.use("/api", workingHoursRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
