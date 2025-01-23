@@ -209,6 +209,12 @@ router.post("/verify-payment", async (req, res) => {
 
       await appointment.save();
 
+      sendBookingConfirmation(email, name, {
+        service: service,
+        date: date,
+        time: time,
+      });
+
       return res.status(200).json({
         success: true,
         message: "Appointment created successfully.",
