@@ -1,4 +1,6 @@
 const cron = require("node-cron");
+const Appointment = require("./../models/Appointment");
+
 const sendBookingReminder = require("../email/bookingReminder"); // Import the email function
 
 // Scheduler to check for appointments 24 hours from now
