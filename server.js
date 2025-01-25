@@ -5,6 +5,7 @@ const serviceRoutes = require("./routes/services");
 const appointmentRoutes = require("./routes/appointment");
 const workingHoursRoutes = require("./routes/openingHours");
 const adminRoutes = require("./routes/admin");
+require("./utils/scheduler");
 
 const app = express();
 app.use(express.json());

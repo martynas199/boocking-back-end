@@ -3,7 +3,7 @@ const router = express.Router();
 const Stripe = require("stripe"); // Import Stripe
 const Appointment = require("./../models/Appointment");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe with secret key
-const sendBookingConfirmation = require("../email/emailService"); // Import the email function
+const sendBookingConfirmation = require("../email/bookingConfirmation"); // Import the email function
 
 // Endpoint to create a PaymentIntent with Stripe
 router.post("/payment", async (req, res) => {
