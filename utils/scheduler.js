@@ -1,6 +1,6 @@
 const moment = require("moment");
 const cron = require("node-cron");
-const Appointment = require("./models/Appointment");
+const Appointment = require("../models/Appointment");
 const sendBookingReminder = require("../email/bookingReminder"); // Adjust path accordingly
 
 cron.schedule("0 * * * *", async () => {
