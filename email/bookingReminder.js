@@ -5,7 +5,7 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Send email function
-const sendBookingConfirmation = async (appointment) => {
+const sendBookingReminder = async (appointment) => {
   const msg = {
     to: appointment.email, // Recipient's email
     from: "martynas.20@hotmail.com", // Your verified sender email
@@ -46,4 +46,4 @@ const sendBookingConfirmation = async (appointment) => {
   }
 };
 
-module.exports = sendBookingConfirmation;
+module.exports = sendBookingReminder;

@@ -1,22 +1,19 @@
+const moment = require("moment");
 const cron = require("node-cron");
-const Appointment = require("./../models/Appointment");
+const Appointment = require("./models/Appointment");
+const sendBookingReminder = require("../email/bookingReminder"); // Adjust path accordingly
 
-const sendBookingReminder = require("../email/bookingReminder"); // Import the email function
-
-// Scheduler to check for appointments 24 hours from now
 cron.schedule("0 * * * *", async () => {
   try {
-    const now = new Date();
-    const reminderTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+    const now = moment();
+    const reminderTime = now.add(24, "hours"); // 24 hours from now
 
     // Find appointments happening 24 hours from now
     const appointments = await Appointment.find({
-      date: reminderTime.toISOString().split("T")[0],
+      date: reminderTime.format("YYYY-MM-DD"), // Date 24 hours from now
       time: {
-        $gte: reminderTime.toTimeString().split(" ")[0],
-        $lt: new Date(reminderTime.getTime() + 60 * 60 * 1000)
-          .toTimeString()
-          .split(" ")[0],
+        $gte: reminderTime.format("HH:mm:ss"),
+        $lt: reminderTime.add(1, "hour").format("HH:mm:ss"), // 1-hour window for time
       },
     });
 
