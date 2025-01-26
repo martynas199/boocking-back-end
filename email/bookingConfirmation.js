@@ -35,6 +35,10 @@ const sendBookingConfirmation = async (toEmail, userName, bookingDetails) => {
   };
 
   try {
+    console.log(
+      "Booking confirmation email sent initiated sendBookingConfirmation."
+    );
+
     await sgMail.send(msg);
 
     console.log("Booking confirmation email sent successfully.");

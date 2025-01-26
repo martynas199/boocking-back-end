@@ -178,6 +178,12 @@ router.post("/verify-payment", async (req, res) => {
 
       if (existingAppointment) {
         if (existingAppointment.payment_verified) {
+          sendBookingConfirmation(email, name, {
+            service: service,
+            date: date,
+            time: time,
+          });
+
           return res.status(200).json({
             success: true,
             message: "Successfully booked.",
@@ -187,6 +193,12 @@ router.post("/verify-payment", async (req, res) => {
         // Update payment status if appointment exists but was not verified
         existingAppointment.payment_verified = true;
         await existingAppointment.save();
+        sendBookingConfirmation(email, name, {
+          service: service,
+          date: date,
+          time: time,
+        });
+
         return res.status(200).json({
           success: true,
           message: "Payment verified and appointment updated successfully.",
