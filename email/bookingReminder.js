@@ -12,7 +12,7 @@ const sendBookingReminder = async (appointment) => {
     subject: "Booking Confirmation",
     text: `Hello ${appointment.name}, this is a friendly reminder for your appointment!`,
     html: `
-     <p>Dear ${userName},</p>
+     <p>Dear ${appointment.name},</p>
 <p>This is a friendly reminder for your appointment! Here are your booking details:</p>
 <table style="border-collapse: collapse; width: 100%; max-width: 600px; font-family: Arial, sans-serif;">
   <tr>
@@ -37,7 +37,7 @@ const sendBookingReminder = async (appointment) => {
   try {
     await sgMail.send(msg);
 
-    console.log("Booking confirmation email sent successfully.");
+    console.log("Booking reminer email sent successfully.");
   } catch (error) {
     console.error(
       "Error sending email:",
