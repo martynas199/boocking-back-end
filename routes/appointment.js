@@ -57,7 +57,7 @@ router.post("/payment", async (req, res) => {
       ],
       mode: "payment", // One-time payment
       success_url:
-        "https://beauty-app-five.vercel.app/success?session_id={CHECKOUT_SESSION_ID}",
+        "https://permanentbyjuste.co.uk/success?session_id={CHECKOUT_SESSION_ID}",
       cancel_url: "https://booking-virid.vercel.app/cancel",
       metadata: {
         name,
