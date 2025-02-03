@@ -4,6 +4,7 @@ const Stripe = require("stripe"); // Import Stripe
 const Appointment = require("./../models/Appointment");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe with secret key
 const sendBookingConfirmation = require("../email/bookingConfirmation"); // Import the email function
+const sendBooking = require("../email/booking"); // Import the email function
 
 // Endpoint to create a PaymentIntent with Stripe
 router.post("/payment", async (req, res) => {
@@ -132,6 +133,12 @@ router.post("/verify-payment", async (req, res) => {
       await appointment.save();
 
       sendBookingConfirmation(email, name, {
+        service: service,
+        date: date,
+        time: time,
+      });
+
+      sendBooking(email, name, {
         service: service,
         date: date,
         time: time,
